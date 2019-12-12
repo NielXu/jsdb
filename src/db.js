@@ -1,22 +1,20 @@
+/**
+ * The normal database that can perform CRUD
+ * operations but it is mutable, which means
+ * it will modify the original data passed from
+ * the constructor.
+ */
 class Database {
     constructor(init) {
-        this.dbData = init;
+        this.data = init? init : [];
     }
 
-    get data() {
-        return this.dbData;
-    }
-
-    set data(newData) {
-        return this.newData;
-    }
-
-    insert(query) {
-
+    insert(document) {
+        this.data.push(document);
     }
 
     read(query) {
-
+        
     }
 
     update(query, update) {
@@ -24,7 +22,10 @@ class Database {
     }
 
     delete(query) {
-        
+
     }
-    
+}
+
+module.exports = {
+    BasicDatabase: Database
 }

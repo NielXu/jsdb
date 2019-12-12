@@ -1,0 +1,12 @@
+{
+  "name": "jsdb",
+  "version": "1.0.0",
+  "description": "Mock database based on Json",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

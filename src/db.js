@@ -37,7 +37,20 @@ class Database {
     }
 
     delete(query) {
-
+        const found = parseQuery(this.data, query);
+        let candidate = [];
+        for(var i=0;i<this.data.length;i++) {
+            const data = this.data[i];
+            for(var j=0;j<found.length;j++) {
+                const foundData = found[j];
+                if(data == foundData) {
+                    candidate.push(i);
+                }
+            }
+        }
+        for(var i=candidate.length-1;i>=0;i--) {
+            this.data.splice(candidate[i], 1);
+        }
     }
 }
 

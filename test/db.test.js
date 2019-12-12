@@ -71,6 +71,53 @@ describe('BasicDatabase', () => {
         it('should return me all data if query object is empty', () => {
             const basic = new BasicDatabase(init);
             expect(basic.read({})).to.deep.equal(init);
-        })
+        });
+    });
+
+    describe('Delete', () => {
+        it('should delete the data by query', () => {
+            const init = [
+                {key: "A", value: "B"},
+                {key: "C", value: "D"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.delete({key: "A"});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "C", value: "D"}]);
+        });
+
+        it('should not delete anything query found nothing', () => {
+            const init = [
+                {key: "A", value: "B"},
+                {key: "C", value: "D"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.delete({key: "Q"});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "A", value: "B"}, {key: "C", value: "D"}]);
+        });
+
+        it('should delete everything if query is empty', () => {
+            const init = [
+                {key: "A", value: "B"},
+                {key: "C", value: "D"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.delete({});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([]);
+        });
+
+        it('should delete multiple data if query matched them all', () => {
+            const init = [
+                {key: "A", value: "X"},
+                {key: "D", value: "Y"},
+                {key: "C", value: "X"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.delete({value: "X"});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "D", value: "Y"}]);
+        });
     });
 });

@@ -98,7 +98,7 @@ describe('Query module - parseQuery()', () => {
     it('should return me nothing if data is not nested but query does', () => {
         const query = {
             key: "E",
-            unExistingWrap: {
+            value: {
                 unExistingKey: "Q"
             }
         }
@@ -110,5 +110,19 @@ describe('Query module - parseQuery()', () => {
         const query = {wrap: {}};
         const result = parseQuery(data, query);
         expect(result).to.deep.equal([data[4], data[5], data[6]]);
-    })
+    });
+
+    it('should return me nothing if data is nested but query is not', () => {
+        const query = {
+            wrap: "X"
+        }
+        const result = parseQuery(data, query);
+        expect(result).to.deep.equal([]);
+    });
+
+    it('should return me all data if query is empty', () => {
+        const query = {};
+        const result = parseQuery(data, query);
+        expect(result).to.deep.equal(data);
+    });
 });

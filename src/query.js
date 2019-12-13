@@ -55,17 +55,21 @@ function parseNested(query) {
  * Tell if the query matched the data, return true
  * if it does, false otherwise. It can also handle
  * nested query or data.
+ * If strictly matched is enabled, the query will be
+ * compared with the data strictly, which means they
+ * must have same properties and same values.
  * 
  * @param {Object} data Data object
  * @param {Object} query Query object
+ * @param {Boolean} strict Strictly matched
+ * @param {Number} level The recursion level, starts with 0
  */
-function isMatched(data, query) {
-    query = parseNested(query);
+function isMatched(data, query, strict, level) {
     let matched = true;
     for(var key in query) {
         if(data.hasOwnProperty(key)) {
             if(typeof query[key] === 'object') {
-                if(!isMatched(data[key], query[key])) {
+                if(!isMatched(data[key], query[key], strict, level+1)) {
                     matched = false;
                     break;
                 }
@@ -78,6 +82,26 @@ function isMatched(data, query) {
         else {
             matched = false;
             break;
+        }
+    }
+    if(strict && level !== 0) {
+        for(var key in data) {
+            if(query.hasOwnProperty(key)) {
+                if(typeof data[key] === 'object') {
+                    if(!isMatched(data[key], query[key], strict, level+1)) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else if(query[key] !== data[key]) {
+                    matched = false;
+                    break;
+                }
+            }
+            else {
+                matched = false;
+                break;
+            }
         }
     }
     return matched;
@@ -95,8 +119,10 @@ module.exports = {
      */
     parseQuery: function(data, query) {
         let matched = [];
+        const parsed = parseNested(query);
+        const strict = JSON.stringify(parsed) === JSON.stringify(query)
         data.forEach((e) => {
-            if(isMatched(e, query)) matched.push(e);
+            if(isMatched(e, parsed, strict, 0)) matched.push(e);
         });
         return matched;
     },

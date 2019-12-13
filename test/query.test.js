@@ -1,4 +1,4 @@
-const { parseQuery, parseNested } = require('../src/query');
+const { parseQuery, parseNested, mergeDiff } = require('../src/query');
 const { expect } = require('chai');
 
 describe('Query module - parseQuery()', () => {
@@ -232,3 +232,47 @@ describe('Query module - parseNested()', () => {
         expect(result).to.deep.equal({key: {A: {value: "OK"}}, value:{ B: {status: "Good"}}});
     });
 });
+
+describe('Query module - mergeDiff()', () => {
+    it('should return correct object with simple query', () => {
+        const data = {key: "X", value: "Y"};
+        const query = {value: "Z"};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: "Z"});
+    });
+
+    it('should return correct object if data and query both contain object', () => {
+        const data = {key: "X", value: {status: 200, message: "Success"}};
+        const query = {"value.status": 400};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: {status: 400, message: "Success"}});
+    });
+
+    it('should return correct object if data have object and query has strict object', () => {
+        const data = {key: "X", value: {status: 200, message: "Success"}};
+        const query = {value: {status: 400}};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: {status: 400}});
+    });
+
+    it('should return correct object if data have no object but query does', () => {
+        const data = {key: "X", value: "Y"};
+        const query = {value: {status: 200, message: "OK"}};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: {status: 200, message: "OK"}});
+    });
+
+    it('should return correct object if data has object but query does not', () => {
+        const data = {key: "X", value: {status: 200, message: "OK"}};
+        const query = {value: "Y"};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: "Y"});
+    });
+
+    it('should return correct object with same name in different layer in data object', () => {
+        const data = {key: "X", value: {status: {code: 200, message: "OK"}, message: "Success"}};
+        const query = {"value.status.message": "YES"};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: {status: {code: 200, message: "YES"}, message: "Success"}})
+    });
+})

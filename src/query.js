@@ -171,13 +171,16 @@ module.exports = {
      * `data={key: "A", value: "C"}`, `query={value: "X"}`,
      * merging them will be `{key: "A", value: "X"}`.
      * Return the result as a new object, the original object
-     * will not be modified.
+     * will not be modified by default. To merge in palce, set
+     * `inPlace` to true and the result will be saved in the
+     * `data` object
      * 
      * @param {Object} data A single object
      * @param {Object} query Object query
+     * @param {Boolean} inplace Merge inplace
      */
-    mergeDiff: function(data, query) {
-        const cp = JSON.parse(JSON.stringify(data));
+    mergeDiff: function(data, query, inPlace=false) {
+        const cp = inPlace? data : JSON.parse(JSON.stringify(data));
         const parsed = parseNested(query);
         const strict = JSON.stringify(query) === JSON.stringify(parsed);
         recurMerge(cp, parsed, strict);

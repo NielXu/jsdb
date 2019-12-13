@@ -120,4 +120,19 @@ describe('BasicDatabase', () => {
             expect(basic.data).to.deep.equal([{key: "D", value: "Y"}]);
         });
     });
+
+    describe('Update', () => {
+        it('should update data by query', () => {
+            const init = [
+                {key: "A", value: "B"},
+                {key: "C", value: "D"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({key: "A"}, {value: "X"});
+            console.log(basic.data);
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "A", value: "X"}, {key: "C", value: "D"}]);
+        })
+    })
+
 });

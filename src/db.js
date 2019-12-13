@@ -1,4 +1,4 @@
-const { parseQuery } = require('./query');
+const { parseQuery, mergeDiff } = require('./query');
 
 /**
  * Find the index of matched data and return
@@ -57,7 +57,7 @@ class Database {
         const found = parseQuery(this.data, query);
         const candidate = findCandidateIndex(this.data, found);
         for(var i=0;i<candidate.length;i++) {
-            this.data[i] = update;
+            mergeDiff(this.data[candidate[i]], update, true);
         }
     }
 

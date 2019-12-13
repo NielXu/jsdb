@@ -1,6 +1,27 @@
 const { parseQuery } = require('./query');
 
 /**
+ * Find the index of matched data and return
+ * them in an array.
+ * 
+ * @param {Ojbect} data Array of objects
+ * @param {Object} found Array of found objects
+ */
+function findCandidateIndex(data, found) {
+    let candidate = [];
+    for(var i=0;i<data.length;i++) {
+        const data_ = data[i];
+        for(var j=0;j<found.length;j++) {
+            const foundData = found[j];
+            if(data_ == foundData) {
+                candidate.push(i);
+            }
+        }
+    }
+    return candidate;
+}
+
+/**
  * The normal database that can perform CRUD
  * operations but it is mutable, which means
  * it will modify the original data passed from
@@ -33,21 +54,16 @@ class Database {
     }
 
     update(query, update) {
-
+        const found = parseQuery(this.data, query);
+        const candidate = findCandidateIndex(this.data, found);
+        for(var i=0;i<candidate.length;i++) {
+            this.data[i] = update;
+        }
     }
 
     delete(query) {
         const found = parseQuery(this.data, query);
-        let candidate = [];
-        for(var i=0;i<this.data.length;i++) {
-            const data = this.data[i];
-            for(var j=0;j<found.length;j++) {
-                const foundData = found[j];
-                if(data == foundData) {
-                    candidate.push(i);
-                }
-            }
-        }
+        const candidate = findCandidateIndex(this.data, found);
         for(var i=candidate.length-1;i>=0;i--) {
             this.data.splice(candidate[i], 1);
         }

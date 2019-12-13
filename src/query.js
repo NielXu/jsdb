@@ -52,6 +52,45 @@ function parseNested(query) {
 }
 
 /**
+ * Recursively merge the data and query
+ * object. If strict is enabled, the field
+ * in data will be completely replaced by
+ * the query.
+ * 
+ * @param {Object} data Data object
+ * @param {Object} query Query object
+ * @param {Boolean} strict Strictly merge
+ */
+function recurMerge(data, query, strict) {
+    // {id: "X", value: "Y"}, {value: "Q"}
+    // {id: "X", value: {status: 200}}, {"value.status": 200} => {value: {status: 200}}
+    // {id: "X"}, {value: "X"} => {id: "X", value: "X"}
+    // {id: "X", value: {status: 200, message: "OK"}}, {value: {status: 400}}
+    // => {id: "X", value: {status: 400}}
+    for(var key in query) {
+        if(data.hasOwnProperty(key)) {
+            if(strict) {
+                data[key] = query[key];
+            }
+            else if(typeof data[key] === 'object') {
+                if(typeof query[key] === 'object') {
+                    recurMerge(data[key], query[key]);
+                }
+                else {
+                    data[key] = query[key];
+                }
+            }
+            else {
+                data[key] = query[key];
+            }
+        }
+        else {
+            data[key] = query[key];
+        }
+    }
+}
+
+/**
  * Tell if the query matched the data, return true
  * if it does, false otherwise. It can also handle
  * nested query or data.
@@ -130,13 +169,19 @@ module.exports = {
      * Merge the data object with the query object, replacing
      * the field in data to the field in query. For example,
      * `data={key: "A", value: "C"}`, `query={value: "X"}`,
-     * merging them will be `{key: "A", value: "X"}`
+     * merging them will be `{key: "A", value: "X"}`.
+     * Return the result as a new object, the original object
+     * will not be modified.
      * 
      * @param {Object} data A single object
      * @param {Object} query Object query
      */
     mergeDiff: function(data, query) {
-
+        const cp = JSON.parse(JSON.stringify(data));
+        const parsed = parseNested(query);
+        const strict = JSON.stringify(query) === JSON.stringify(parsed);
+        recurMerge(cp, parsed, strict);
+        return cp;
     },
     parseNested: parseNested,
 }

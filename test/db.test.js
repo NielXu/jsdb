@@ -58,7 +58,7 @@ describe('BasicDatabase', () => {
             const basic = new BasicDatabase(init);
             expect(basic.read({key: "A"})).to.deep.equal([init[0]]);
             expect(basic.read({others: "X"})).to.deep.equal([init[0], init[1]]);
-            expect(basic.read({nested: {innerKey: "Z"}})).to.deep.equal([init[2]]);
+            expect(basic.read({nested: {innerKey: "Z", innerValue: "Q"}})).to.deep.equal([init[2]]);
             expect(basic.read({key: "P"})).to.deep.equal([]);
             expect(basic.read({nested: {innerKey: "L", innerValue: "Q"}})).to.deep.equal([]);
         });

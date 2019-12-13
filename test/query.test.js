@@ -50,6 +50,12 @@ describe('Query module - parseQuery()', () => {
             innerKey: "I",
             innerValue: "S"
         }
+    }, {
+        wrap: {
+            "innerInnerWrap": {
+                  "innerInnerKey": "U"
+            }
+        }
     }];
     it('should return the matched data by query with only one field', () => {
         const query = {key: "A"};
@@ -82,7 +88,7 @@ describe('Query module - parseQuery()', () => {
     });
 
     it('should return me matched data by query with nested object', () => {
-        const query = {wrap: {innerKey: "R"}};
+        const query = {wrap: {innerKey: "R", innerValue: "S"}};
         const result = parseQuery(data, query);
         expect(result).to.deep.equal([data[4]]);
     });
@@ -92,10 +98,10 @@ describe('Query module - parseQuery()', () => {
             wrap: {
                 innerWrap: {
                     innerInnerWrap: {
-                        innerInnerKey: "U"
+                        innerInnerKey: "U",
                     }
                 },
-                innerKey: "V",
+                innerKey: "V"
             }
         };
         const result = parseQuery(data, query);
@@ -111,12 +117,6 @@ describe('Query module - parseQuery()', () => {
         }
         const result = parseQuery(data, query);
         expect(result).to.deep.equal([]);
-    });
-
-    it('should return me all matched data by query with empty nested object', () => {
-        const query = {wrap: {}};
-        const result = parseQuery(data, query);
-        expect(result).to.deep.equal([data[4], data[5], data[6], data[7]]);
     });
 
     it('should return me nothing if data is nested but query is not', () => {
@@ -164,6 +164,18 @@ describe('Query module - parseQuery()', () => {
         }
         const result = parseQuery(data, query);
         expect(result).to.deep.equal([data[7]]);
+    });
+
+    it('should return me the matched data by query with exact nested match', () => {
+        const query = {
+            wrap: {
+                "innerInnerWrap": {
+                      "innerInnerKey": "U"
+                }
+            }
+        }
+        const result = parseQuery(data, query);
+        expect(result).to.deep.equal([data[8]]);
     });
 });
 

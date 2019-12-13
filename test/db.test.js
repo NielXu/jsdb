@@ -1,5 +1,6 @@
 const { BasicDatabase } = require('../src/db');
 const { expect } = require('chai');
+const TABLE = "test";
 
 describe('BasicDatabase', () => {
 
@@ -10,13 +11,15 @@ describe('BasicDatabase', () => {
             }, {
                 key: "C", value: "D"
             }];
-            const basic = new BasicDatabase(init);
-            expect(basic.data).to.deep.equal(init);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            expect(basic.data[TABLE]).to.deep.equal(init);
         });
 
         it('should have empty array if nothing is passed to the constructor', () => {
             const basic = new BasicDatabase();
-            expect(basic.data).to.deep.equal([]);
+            basic.create(TABLE);
+            expect(basic.data[TABLE]).to.deep.equal([]);
         });
     });
 
@@ -27,10 +30,11 @@ describe('BasicDatabase', () => {
             }, {
                 key: "C", value: "D"
             }];
-            const basic = new BasicDatabase(init);
-            expect(basic.data).to.deep.equal(init);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            expect(basic.data[TABLE]).to.deep.equal(init);
             init[0]['value'] = 'X';
-            expect(basic.data).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal(init);
         });
     });
 
@@ -55,22 +59,25 @@ describe('BasicDatabase', () => {
             }
         ];
         it('should return me correct data by query', () => {
-            const basic = new BasicDatabase(init);
-            expect(basic.read({key: "A"})).to.deep.equal([init[0]]);
-            expect(basic.read({others: "X"})).to.deep.equal([init[0], init[1]]);
-            expect(basic.read({nested: {innerKey: "Z", innerValue: "Q"}})).to.deep.equal([init[2]]);
-            expect(basic.read({key: "P"})).to.deep.equal([]);
-            expect(basic.read({nested: {innerKey: "L", innerValue: "Q"}})).to.deep.equal([]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            expect(basic.read({key: "A"}, TABLE)).to.deep.equal([init[0]]);
+            expect(basic.read({others: "X"}, TABLE)).to.deep.equal([init[0], init[1]]);
+            expect(basic.read({nested: {innerKey: "Z", innerValue: "Q"}}, TABLE)).to.deep.equal([init[2]]);
+            expect(basic.read({key: "P"}, TABLE)).to.deep.equal([]);
+            expect(basic.read({nested: {innerKey: "L", innerValue: "Q"}}, TABLE)).to.deep.equal([]);
         });
 
         it('should return me nothing if no data in database', () => {
             const basic = new BasicDatabase();
-            expect(basic.read({key: "A"})).to.deep.equal([]);
+            basic.create(TABLE, []);
+            expect(basic.read({key: "A"}, TABLE)).to.deep.equal([]);
         });
 
         it('should return me all data if query object is empty', () => {
-            const basic = new BasicDatabase(init);
-            expect(basic.read({})).to.deep.equal(init);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            expect(basic.read({}, TABLE)).to.deep.equal(init);
         });
     });
 
@@ -80,10 +87,11 @@ describe('BasicDatabase', () => {
                 {key: "A", value: "B"},
                 {key: "C", value: "D"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.delete({key: "A"});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "C", value: "D"}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.delete({key: "A"}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "C", value: "D"}]);
         });
 
         it('should not delete anything query found nothing', () => {
@@ -91,10 +99,11 @@ describe('BasicDatabase', () => {
                 {key: "A", value: "B"},
                 {key: "C", value: "D"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.delete({key: "Q"});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "A", value: "B"}, {key: "C", value: "D"}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.delete({key: "Q"}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "A", value: "B"}, {key: "C", value: "D"}]);
         });
 
         it('should delete everything if query is empty', () => {
@@ -102,10 +111,11 @@ describe('BasicDatabase', () => {
                 {key: "A", value: "B"},
                 {key: "C", value: "D"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.delete({});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.delete({}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([]);
         });
 
         it('should delete multiple data if query matched them all', () => {
@@ -114,10 +124,11 @@ describe('BasicDatabase', () => {
                 {key: "D", value: "Y"},
                 {key: "C", value: "X"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.delete({value: "X"});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "D", value: "Y"}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.delete({value: "X"}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "D", value: "Y"}]);
         });
     });
 
@@ -127,10 +138,11 @@ describe('BasicDatabase', () => {
                 {key: "A", value: "B"},
                 {key: "C", value: "D"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({key: "A"}, {value: "X"});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "A", value: "X"}, {key: "C", value: "D"}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({key: "A"}, {value: "X"}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "A", value: "X"}, {key: "C", value: "D"}]);
         });
 
         it('should update multiple data by query', () => {
@@ -138,10 +150,11 @@ describe('BasicDatabase', () => {
                 {key: "A", value: 1, status: "BAD"},
                 {key: "B", value: 1, status: "OK"},
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({value: 1}, {status: "GOOD"});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "A", value: 1, status: "GOOD"}, {key: "B", value: 1, status: "GOOD"}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({value: 1}, {status: "GOOD"}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "A", value: 1, status: "GOOD"}, {key: "B", value: 1, status: "GOOD"}]);
         });
 
         it('should update nested data by query', () => {
@@ -149,10 +162,11 @@ describe('BasicDatabase', () => {
                 {key: "A"},
                 {key: "B", status: {code: 200}}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({key: "B"}, {"status.code": 400});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal([{key: "A"}, {key: "B", status: {code: 400}}]);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({key: "B"}, {"status.code": 400}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal([{key: "A"}, {key: "B", status: {code: 400}}]);
         });
 
         it('should add extra fields to data', () => {
@@ -166,10 +180,11 @@ describe('BasicDatabase', () => {
                 {value: "X", status: 0, flag: true},
                 {value: "Y"}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({status: 0}, {flag: true});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal(ex);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({status: 0}, {flag: true}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal(ex);
         });
 
         it('should update multiple nested data by query', () => {
@@ -183,10 +198,11 @@ describe('BasicDatabase', () => {
                 {value: "Y", status: {code: 401}},
                 {value: "X", status: {code: 500}}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({value: "X"}, {"status.code": 500});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal(ex);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({value: "X"}, {"status.code": 500}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal(ex);
         });
 
         it('should update data without nested field but appear in query', () => {
@@ -200,10 +216,11 @@ describe('BasicDatabase', () => {
                 {key: "Y"},
                 {value: "Y", status: {code: 200}}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({value: "Y"}, {"status.code": 200});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal(ex);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({value: "Y"}, {"status.code": 200}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal(ex);
         });
 
         it('should update data with strict nested query', () => {
@@ -217,10 +234,11 @@ describe('BasicDatabase', () => {
                 {value: "X", status: {code: 500}},
                 {value: "Y", status: {code: 401, message: "BAD"}}
             ];
-            const basic = new BasicDatabase(init);
-            basic.update({value: "X"}, {status: {code: 500}});
-            expect(basic.data).to.deep.equal(init);
-            expect(basic.data).to.deep.equal(ex);
+            const basic = new BasicDatabase();
+            basic.create(TABLE, init);
+            basic.update({value: "X"}, {status: {code: 500}}, TABLE);
+            expect(basic.data[TABLE]).to.deep.equal(init);
+            expect(basic.data[TABLE]).to.deep.equal(ex);
         });
     })
 

@@ -275,4 +275,26 @@ describe('Query module - mergeDiff()', () => {
         const result = mergeDiff(data, query);
         expect(result).to.deep.equal({key: "X", value: {status: {code: 200, message: "YES"}, message: "Success"}})
     });
+
+    it('should return correct object if data has no such field', () => {
+        const data = {key: "X"};
+        const query = {value: "Y"};
+        const result = mergeDiff(data, query);
+        expect(result).to.deep.equal({key: "X", value: "Y"});
+    });
+
+    it('should return correct object with inPlace enabled', () => {
+        const data = {key: "X", value: {status: 200}};
+        const query = {"value.status": 400};
+        const result = mergeDiff(data, query, true);
+        expect(result).to.deep.equal(data);
+    });
+
+    it('should return correct object with data has no nested field but query does', () => {
+        const data = {key: "X"};
+        const query = {"status.code": 200};
+        const result = mergeDiff(data, query, true);
+        expect(result).to.deep.equal({key: "X", status: {code: 200}});
+    })
+
 })

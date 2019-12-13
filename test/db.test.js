@@ -129,10 +129,99 @@ describe('BasicDatabase', () => {
             ];
             const basic = new BasicDatabase(init);
             basic.update({key: "A"}, {value: "X"});
-            console.log(basic.data);
             expect(basic.data).to.deep.equal(init);
             expect(basic.data).to.deep.equal([{key: "A", value: "X"}, {key: "C", value: "D"}]);
-        })
+        });
+
+        it('should update multiple data by query', () => {
+            const init = [
+                {key: "A", value: 1, status: "BAD"},
+                {key: "B", value: 1, status: "OK"},
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({value: 1}, {status: "GOOD"});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "A", value: 1, status: "GOOD"}, {key: "B", value: 1, status: "GOOD"}]);
+        });
+
+        it('should update nested data by query', () => {
+            const init = [
+                {key: "A"},
+                {key: "B", status: {code: 200}}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({key: "B"}, {"status.code": 400});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal([{key: "A"}, {key: "B", status: {code: 400}}]);
+        });
+
+        it('should add extra fields to data', () => {
+            const init = [
+                {value: "X", status: 0},
+                {value: "X", status: 0},
+                {value: "Y"}
+            ];
+            const ex = [
+                {value: "X", status: 0, flag: true},
+                {value: "X", status: 0, flag: true},
+                {value: "Y"}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({status: 0}, {flag: true});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal(ex);
+        });
+
+        it('should update multiple nested data by query', () => {
+            const init = [
+                {value: "X", status: {code: 200}},
+                {value: "Y", status: {code: 401}},
+                {value: "X", status: {code: 400}}
+            ];
+            const ex = [
+                {value: "X", status: {code: 500}},
+                {value: "Y", status: {code: 401}},
+                {value: "X", status: {code: 500}}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({value: "X"}, {"status.code": 500});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal(ex);
+        });
+
+        it('should update data without nested field but appear in query', () => {
+            const init = [
+                {value: "X"},
+                {key: "Y"},
+                {value: "Y"}
+            ];
+            const ex = [
+                {value: "X"},
+                {key: "Y"},
+                {value: "Y", status: {code: 200}}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({value: "Y"}, {"status.code": 200});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal(ex);
+        });
+
+        it('should update data with strict nested query', () => {
+            const init = [
+                {value: "X", status: {code: 200, message: "OK"}},
+                {value: "X"},
+                {value: "Y", status: {code: 401, message: "BAD"}}
+            ];
+            const ex = [
+                {value: "X", status: {code: 500}},
+                {value: "X", status: {code: 500}},
+                {value: "Y", status: {code: 401, message: "BAD"}}
+            ];
+            const basic = new BasicDatabase(init);
+            basic.update({value: "X"}, {status: {code: 500}});
+            expect(basic.data).to.deep.equal(init);
+            expect(basic.data).to.deep.equal(ex);
+        });
     })
 
 });

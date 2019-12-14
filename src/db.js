@@ -1,25 +1,4 @@
-const { parseQuery, mergeDiff } = require('./query');
-
-/**
- * Find the index of matched data and return
- * them in an array.
- * 
- * @param {Ojbect} data Array of objects
- * @param {Object} found Array of found objects
- */
-function findCandidateIndex(data, found) {
-    let candidate = [];
-    for(var i=0;i<data.length;i++) {
-        const data_ = data[i];
-        for(var j=0;j<found.length;j++) {
-            const foundData = found[j];
-            if(data_ == foundData) {
-                candidate.push(i);
-            }
-        }
-    }
-    return candidate;
-}
+const { BasicTable } = require('./table');
 
 /**
  * The normal database that can perform CRUD
@@ -43,7 +22,7 @@ class Database {
         if(this.data.hasOwnProperty(tableName)) {
             throw `Table with name "${tableName}" already exists`;
         }
-        this.data[tableName] = init? init : [];
+        this.data[tableName] = new BasicTable(tableName, init);
     }
 
     /**
@@ -79,7 +58,7 @@ class Database {
      * of the database, it is not recommended to use
      */
     insert(document, tableName) {
-        this.data[this._checkUse(tableName)].push(document);
+        this.data[this._checkUse(tableName)].insert(document);
     }
 
     /**
@@ -92,11 +71,11 @@ class Database {
      * of the database, it is not recommended to use
      */
     read(query, tableName) {
-        return parseQuery(this.data[this._checkUse(tableName)], query);
+        return this.data[this._checkUse(tableName)].read(query);
     }
 
     /**
-     * Update the data that matched the query. It the
+     * Update the data that matched the query. If the
      * query has key like `{key.A.B: "someValue"}`, the
      * update will not affect the existing fields, but if
      * the query is `{key: {A: {B: "someValue"}}}`, the
@@ -108,12 +87,7 @@ class Database {
      * of the database, it is not recommended to use
      */
     update(query, update, tableName) {
-        const data = this.data[this._checkUse(tableName)];
-        const found = parseQuery(data, query);
-        const candidate = findCandidateIndex(data, found);
-        for(var i=0;i<candidate.length;i++) {
-            mergeDiff(data[candidate[i]], update, true);
-        }
+        this.data[this._checkUse(tableName)].update(query, update);
     }
 
     /**
@@ -125,12 +99,7 @@ class Database {
      * of the database, it is not recommended to use
      */
     delete(query, tableName) {
-        const data = this.data[this._checkUse(tableName)];
-        const found = parseQuery(data, query);
-        const candidate = findCandidateIndex(data, found);
-        for(var i=candidate.length-1;i>=0;i--) {
-            data.splice(candidate[i], 1);
-        }
+        this.data[this._checkUse(tableName)].delete(query);
     }
 
     /**

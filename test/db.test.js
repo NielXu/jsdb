@@ -293,4 +293,37 @@ describe('BasicDatabase', () => {
         });
     });
 
+    describe('Switch between tables', () => {
+        const init = [
+            {value: "X", field: "OK", finished: true},
+            {value: "X", field: "BAD"},
+            {value: "Y", field: {status: "FAILED"}}
+        ];
+        const initAnother = [
+            {value: "G"},
+            {value: "X", field: "BAD"},
+            {value: "Z", field: {status: "GOOD"}}
+        ];
+        const basic = new BasicDatabase();
+        const TABLE_A = "a";
+        const TABLE_B = "b";
+        basic.create(TABLE_A, init);
+        basic.create(TABLE_B, initAnother);
+        it('should use the table that I specified', () => {
+            basic.use(TABLE_A);
+            const result = basic.read({value: "Y"});
+            expect(result).to.deep.equal([init[2]]);
+            basic.use(TABLE_B);
+            const resultB = basic.read({value: "Y"});
+            expect(resultB).to.deep.equal([]);
+        });
+        
+        it('update one table should not affect the others', () => {
+            basic.use(TABLE_A);
+            basic.update({value: "X", field: "BAD"}, {field: "GOOD"});
+            expect(basic.data[TABLE_A].data).to.deep.equal(init);
+            expect(basic.data[TABLE_B].data).to.deep.equal(initAnother);
+        });
+    });
+
 });

@@ -240,6 +240,57 @@ describe('BasicDatabase', () => {
             expect(basic.data[TABLE].data).to.deep.equal(init);
             expect(basic.data[TABLE].data).to.deep.equal(ex);
         });
-    })
+    });
+
+    describe('Error handling', () => {
+        const init = [
+            {value: "X", status: {code: 200, message: "OK"}},
+            {value: "X"},
+            {value: "Y", status: {code: 401, message: "BAD"}}
+        ];
+        const initAnother = [
+            {value: "X", status: {code: 0, message: "STOP"}},
+            {value: "X"},
+            {value: "Y", status: {code: 0, message: "STOP"}}
+        ];
+        const basic = new BasicDatabase();
+        basic.create(TABLE, init);
+        basic.create("another", initAnother);
+        it('should throw error when querying before specifying table to use', () => {
+            expect(()=>basic.read({})).to.throw("No table is selected");
+        });
+
+        it('should throw error when trying to create tables with duplicated names', () => {
+            expect(()=>basic.create(TABLE)).to.throw(`Table with name "${TABLE}" already exists`);
+        });
+
+        it('should throw error when trying to access table which does not exists', () => {
+            expect(()=>basic.use("null")).to.throw(`Table with name "null" does not exists`);
+        });
+
+        it('should throw error when read from a table which does not exists', () => {
+            expect(()=>basic.read({}, "null")).to.throw(`Table with name "null" does not exists`);
+        });
+
+        it('should throw error when insert to a table which does not exists', () => {
+            expect(()=>basic.insert({}, "null")).to.throw(`Table with name "null" does not exists`);
+        });
+
+        it('should throw error when update in a table which does not exists', () => {
+            expect(()=>basic.update({}, {}, "null")).to.throw(`Table with name "null" does not exists`);
+        });
+
+        it('should throw error when delete in a table which does not exists', () => {
+            expect(()=>basic.insert({}, "null")).to.throw(`Table with name "null" does not exists`);
+        });
+
+        it('should throw error if the init data is not an array but string when creating new table', () => {
+            expect(()=>basic.create("new", "Something")).to.throw(`Unsupported data type: "string"`);
+        });
+
+        it('should throw error if the init data is not an array but object when creating new table', () => {
+            expect(()=>basic.create("new", {"x": "y"})).to.throw(`Unsupported data type: "object"`);
+        });
+    });
 
 });

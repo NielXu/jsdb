@@ -67,7 +67,21 @@ app.get('/create/:tableName', (req, res, next) => {
 });
 
 app.get('/drop/:tableName', (req, res, next) => {
-    res.json({message: "Unimplemented"});
+    if(!req.params.tableName) {
+        res.json({message: "Error: missing tableName in url"});
+    }
+    else {
+        try {
+            db.drop(req.params.tableName);
+            res.json({message: 'Success'});
+        }
+        catch(e) {
+            res.json({
+                message: `Error occured when dropping table "${req.params.tableName}"`,
+                error: e.message
+            });
+        }
+    }
 });
 
 app.get('/insert/:tableName/:data', (req, res, next) => {

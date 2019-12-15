@@ -26,6 +26,18 @@ class Database {
     }
 
     /**
+     * Drop a table from the database, all the data will be removed.
+     * 
+     * @param {String} tableName Name of the table
+     */
+    drop(tableName) {
+        if(!this.data.hasOwnProperty(tableName)) {
+            throw `Table with name "${tableName}" does not exists"`;
+        }
+        delete this.data[tableName];
+    }
+
+    /**
      * Use a table, if no table was selected before
      * querying, exception will be raised.
      * 

@@ -291,6 +291,10 @@ describe('BasicDatabase', () => {
         it('should throw error if the init data is not an array but object when creating new table', () => {
             expect(()=>basic.create("new", {"x": "y"})).to.throw(`Unsupported data type: "object"`);
         });
+
+        it('should throw error if dropping a table that is not exists', () => {
+            expect(()=>basic.drop("null")).to.throw(`Table with name "null" does not exists`);
+        })
     });
 
     describe('Switch between tables', () => {
@@ -323,6 +327,34 @@ describe('BasicDatabase', () => {
             basic.update({value: "X", field: "BAD"}, {field: "GOOD"});
             expect(basic.data[TABLE_A].data).to.deep.equal(init);
             expect(basic.data[TABLE_B].data).to.deep.equal(initAnother);
+        });
+    });
+
+    describe('Drop table', () => {
+        const common = {value: "X", field: "BAD"};
+        const init = [
+            {value: "X", field: "OK", finished: true},
+            common,
+            {value: "Y", field: {status: "FAILED"}}
+        ];
+        const initAnother = [
+            {value: "G"},
+            common,
+            {value: "Z", field: {status: "GOOD"}}
+        ];
+        const basic = new BasicDatabase();
+        const TABLE_A = "a";
+        const TABLE_B = "b";
+        basic.create(TABLE_A, init);
+        basic.create(TABLE_B, initAnother);
+        it('should drop a table without affecting others', () => {
+            basic.drop(TABLE_B);
+            expect(basic.data[TABLE_A].data).to.deep.equal([
+                {value: "X", field: "OK", finished: true},
+                common,
+                {value: "Y", field: {status: "FAILED"}}
+            ]);
+            expect(()=>basic.use(TABLE_B)).to.throw(`Table with name "${TABLE_B}" does not exists`);
         });
     });
 

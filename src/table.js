@@ -27,7 +27,7 @@ function findCandidateIndex(data, found) {
 class Table {
     constructor(name, init) {
         this.name = name;
-        this.data = init? init : [];
+        this.data = init? this._checkDataType(init) : [];
     }
 
     /**
@@ -80,6 +80,13 @@ class Table {
         for(var i=candidate.length-1;i>=0;i--) {
             this.data.splice(candidate[i], 1);
         }
+    }
+
+    _checkDataType(data) {
+        if(data.constructor !== [].constructor) {
+            throw `Unsupported data type: "${typeof data}"`;
+        }
+        return data;
     }
 }
 

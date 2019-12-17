@@ -75,4 +75,4 @@ callbackWrap(database.read({}), (result) => {
 - [ ] UniqueDatabase, produce unique index for every document (like MongoDB ObjectID)
 - [ ] Export database to JSON files
 - [ ] Import database from JSON files
-- [ ] Tests for `host` calls
+- [x] Tests for `host` calls

@@ -49,7 +49,7 @@ Then using the following URLs to communicate with the database:
 |GET|/update/{tableName}/{query}/{update}|Update the data that match the query|
 |GET|/delete/{tableName}/{query}?|Delete all the data that match the query, or all data if query is not given|
 
-# Frontend Testing
+# Testing
 One of the use case of JSDB is to mock the data sent back from the backend when developing the frontend. We might want to retrieve the data with some delay as well since we are simulating a real call. In this case, `promiseWrap` and `callbackWrap` might be helpful:
 
 ```JavaScript
@@ -66,3 +66,13 @@ callbackWrap(database.read({}), (result) => {
     console.log(result);
 }, 1000);
 ```
+
+# TODO
+- [ ] Add support of identifiers such as `$gt`, `$lt`
+- [ ] AsyncDatabase, every operation is async
+- [ ] SchemaDatabase, a database that based on schema instead of storing objects
+- [ ] ImmutableDatabase, immutable and produce new results in every step
+- [ ] UniqueDatabase, produce unique index for every document (like MongoDB ObjectID)
+- [ ] Export database to JSON files
+- [ ] Import database from JSON files
+- [ ] Tests for `host` calls

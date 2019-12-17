@@ -28,11 +28,12 @@ app.get('/', (req, res, next) => {
                 additional: "If query is not provided, all data from the table will be returned"
             }, {
                 url: "GET /update/{tableName}/{query}/{update}",
-                manual: "Update the data in table that matched the query"
+                manual: "Update the data in table that matched the query",
+                additional: "The updated data will be returned"
             }, {
                 url: "GET /delete/{tableName}/{query}",
                 manual: "Delete the data in table that matched the query",
-                additional: "If query is not provided, all data in the table will be deleted"
+                additional: "If query is not provided, all data in the table will be deleted, deleted data will be returned"
             },
         ]
     });
@@ -41,7 +42,7 @@ app.get('/', (req, res, next) => {
 app.get('/list', (req, res, next) => {
     try {
         const result = db.list();
-        res.json({data: result});
+        res.json({message: 'Success', data: result});
     }
     catch(e) {
         res.json({message: "Error occured when listing tables", error: e.message});
@@ -114,7 +115,7 @@ app.get('/read/:tableName/:query?', (req, res, next) => {
         try {
             const query = req.params.query? JSON.parse(req.params.query) : {};
             const result = db.read(query, req.params.tableName);
-            res.json({data: result});
+            res.json({message: 'Success', data: result});
         }
         catch(e) {
             res.json({
@@ -139,8 +140,8 @@ app.get('/update/:tableName/:query/:update', (req, res, next) => {
         try {
             const query = JSON.parse(req.params.query);
             const update = JSON.parse(req.params.update);
-            db.update(query, update, req.params.tableName);
-            res.json({message: 'Success'});
+            const updated = db.update(query, update, req.params.tableName);
+            res.json({message: 'Success', update: updated});
         }
         catch(e) {
             res.json({
@@ -158,8 +159,8 @@ app.get('/delete/:tableName/:query?', (req, res, next) => {
     else {
         try {
             const query = req.params.query? JSON.parse(req.params.query) : {};
-            db.delete(query, req.params.tableName);
-            res.json({message: 'Success'});
+            const deleted = db.delete(query, req.params.tableName);
+            res.json({message: 'Success', delete: deleted});
         }
         catch(e) {
             res.json({

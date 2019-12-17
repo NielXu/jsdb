@@ -7,7 +7,7 @@
     "url": "https://github.com/NielXu/jsdb/issues"
   },
   "bin": {
-    "jsdb": "bin/host"
+    "jsdb": "bin/host.js"
   },
   "main": "index.js",
   "scripts": {

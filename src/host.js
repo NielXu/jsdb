@@ -171,4 +171,6 @@ app.get('/delete/:tableName/:query?', (req, res, next) => {
     }
 });
 
-app.listen(argv.PORT? argv.PORT : 5000);
+const PORT = argv.PORT? argv.PORT : 5000;
+app.listen(PORT);
+console.log(`JSDB running on PORT: ${PORT} ...`);

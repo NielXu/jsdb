@@ -5,7 +5,7 @@ JSDB is a fast and easy to use temporary database based on JSON. It can be usefu
 There are different types of databases can be used and the most commonly used one is `BasicDatabase`. To create a new database and a table:
 
 ```JavaScript
-const { BasicDatabase } = require('jsdb').Database;
+const { BasicDatabase } = require('@niellxu/jsdb').Database;
 const datbase = new BasicDatabase();
 database.create('example');
 ```
@@ -53,7 +53,7 @@ Then using the following URLs to communicate with the database:
 One of the use case of JSDB is to mock the data sent back from the backend when developing the frontend. We might want to retrieve the data with some delay as well since we are simulating a real call. In this case, `promiseWrap` and `callbackWrap` might be helpful:
 
 ```JavaScript
-const { promiseWrap, callbackWrap } = require('jsdb').Wrap;
+const { promiseWrap, callbackWrap } = require('@niellxu/jsdb').Wrap;
 
 // Wrap the database result in promise way with 1000ms delay
 promiseWrap(database.read({}), 1000)

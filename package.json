@@ -4,6 +4,7 @@
   "description": "Mock database based on Json",
   "main": "index.js",
   "scripts": {
+    "start": "node src/host.js",
     "test": "mocha test/",
     "test:local": "mocha test/async.test.js test/db.test.js test/query.test.js",
     "test:host": "mocha test/host.test.js"

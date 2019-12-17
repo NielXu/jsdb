@@ -1,7 +1,14 @@
 {
-  "name": "jsdb",
+  "name": "@niellxu/jsdb",
   "version": "1.0.0",
-  "description": "Mock database based on Json",
+  "description": "Fast and easy to use temporary database based on JSON",
+  "homepage": "https://github.com/NielXu/jsdb",
+  "bugs": {
+    "url": "https://github.com/NielXu/jsdb/issues"
+  },
+  "bin": {
+    "jsdb": "bin/host"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node src/host.js",
@@ -10,8 +17,8 @@
     "test:host": "mocha test/host.test.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Daniel Xu",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",

@@ -1,4 +1,7 @@
 # JSDB
+[![npm version](https://badge.fury.io/js/%40niellxu%2Fjsdb.svg)](https://badge.fury.io/js/%40niellxu%2Fjsdb)
+[![Build Status](https://travis-ci.com/NielXu/jsdb.svg?branch=master)](https://travis-ci.com/NielXu/jsdb)
+
 JSDB is a fast and easy to use temporary database based on JSON. It can be useful in different scenarios such as storing data temporarily, testing frontend API call with mock response data, updating JSON files etc.
 
 # Get Started

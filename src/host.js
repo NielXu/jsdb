@@ -45,7 +45,7 @@ app.get('/list', (req, res, next) => {
         res.json({message: 'Success', data: result});
     }
     catch(e) {
-        res.json({message: "Error occured when listing tables", error: e.message});
+        res.json({message: "Error occured when listing tables", error: e.message? e.message : e});
     }
 });
 
@@ -61,7 +61,7 @@ app.get('/create/:tableName', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when creating new table "${req.params.tableName}"`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }
@@ -79,7 +79,7 @@ app.get('/drop/:tableName', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when dropping table "${req.params.tableName}"`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }
@@ -101,7 +101,7 @@ app.get('/insert/:tableName/:data', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when inserting data to table`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }
@@ -120,7 +120,7 @@ app.get('/read/:tableName/:query?', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when reading data`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }
@@ -146,7 +146,7 @@ app.get('/update/:tableName/:query/:update', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when updating data`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }
@@ -165,7 +165,7 @@ app.get('/delete/:tableName/:query?', (req, res, next) => {
         catch(e) {
             res.json({
                 message: `Error occured when deleting data`,
-                error: e.message
+                error: e.message? e.message : e
             });
         }
     }

@@ -55,7 +55,9 @@ class Table {
      * query has key like `{key.A.B: "someValue"}`, the
      * update will not affect the existing fields, but if
      * the query is `{key: {A: {B: "someValue"}}}`, the
-     * existing fields will be replaced.
+     * existing fields will be replaced. Return an object
+     * that contains the newly updated data and the number
+     * of affected data as the result. 
      * 
      * @param {Object} query Query object
      * @param {Object} update Update object
@@ -63,23 +65,31 @@ class Table {
     update(query, update) {
         const found = parseQuery(this.data, query);
         const candidate = findCandidateIndex(this.data, found);
+        let updated = [];
         for(var i=0;i<candidate.length;i++) {
+            updated.push(this.data[candidate[i]]);
             mergeDiff(this.data[candidate[i]], update, true);
         }
+        return {data: updated, count: updated.length};
     }
 
     /**
      * Delete all data that match the query, if the query
-     * is empty all data will be deleted.
+     * is empty all data will be deleted. Return an object
+     * that contains the number of affected data and the
+     * deleted data as the result.
      * 
      * @param {Object} query Query object
      */
     delete(query) {
         const found = parseQuery(this.data, query);
         const candidate = findCandidateIndex(this.data, found);
+        let deleted = [];
         for(var i=candidate.length-1;i>=0;i--) {
+            deleted.unshift(this.data[candidate[i]]);
             this.data.splice(candidate[i], 1);
         }
+        return {data: deleted, count: deleted.length};
     }
 
     _checkDataType(data) {

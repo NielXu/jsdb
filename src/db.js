@@ -91,7 +91,9 @@ class Database {
      * query has key like `{key.A.B: "someValue"}`, the
      * update will not affect the existing fields, but if
      * the query is `{key: {A: {B: "someValue"}}}`, the
-     * existing fields will be replaced.
+     * existing fields will be replaced. Return an object
+     * that contains the newly updated data and the number
+     * of affected data as the result. 
      * 
      * @param {Object} query Query object
      * @param {Object} update Update object
@@ -99,19 +101,21 @@ class Database {
      * of the database, it is not recommended to use
      */
     update(query, update, tableName) {
-        this.data[this._checkUse(tableName)].update(query, update);
+        return this.data[this._checkUse(tableName)].update(query, update);
     }
 
     /**
      * Delete all data that match the query, if the query
-     * is empty all data will be deleted.
+     * is empty all data will be deleted. Return an object
+     * that contains the number of affected data and the
+     * deleted data as the result.
      * 
      * @param {Object} query Query object
      * @param {String} tableName Table to use, this will ignore the current selection
      * of the database, it is not recommended to use
      */
     delete(query, tableName) {
-        this.data[this._checkUse(tableName)].delete(query);
+        return this.data[this._checkUse(tableName)].delete(query);
     }
 
     /**

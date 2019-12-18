@@ -37,7 +37,7 @@ The query is designed to be similar with MongoDB except that it does not support
 JSDB also supports the functionality to host the database on local using `express.js`. To start the database server, simply run:
 
 ```bash
-npm start   # or "npm start -- --PORT=8080" if running on custom port
+jsdb   # or "jsdb --PORT=8080" if running on custom port
 ```
 
 Then using the following URLs to communicate with the database:

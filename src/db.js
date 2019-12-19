@@ -1,4 +1,7 @@
 const { BasicTable } = require('./table');
+const { exportObject, importObject } = require('./json');
+const homedir = require('os').homedir();
+const path = require('path');
 
 /**
  * The normal database that can perform CRUD
@@ -10,6 +13,7 @@ class Database {
     constructor() {
         this.data = {};
         this.using = null;
+        this.type="basic";
     }
 
     /**
@@ -142,6 +146,59 @@ class Database {
     }
 }
 
+function _checkKey(obj, key) {
+    if(obj.hasOwnProperty(key)) {
+        return obj[key];
+    }
+    throw `Key "${key}" does not exists`;
+}
+
+/**
+ * Import data from JSON file and return a corresponding database.
+ * The default location of the JSON files will be `~/.jsdb`. If
+ * a JSON file with the given name already exists, it will be
+ * overwrited and the original data will lost.
+ * 
+ * @param {String} name Name of the JSON file to be imported
+ * @param {String} p Path to the JSON file, default is `~/.jsdb`
+ */
+function importDatabase(name, p=`${path.resolve(homedir, ".jsdb")}`) {
+    const obj = importObject(p, name);
+    const dbType = _checkKey(obj, "type");
+    let db;
+    if(dbType === "basic") {
+        db = new Database();
+    }
+    const tables = _checkKey(obj, "tables");
+    tables.forEach(e => {
+        db.create(_checkKey(e, "name"), _checkKey(e, "data"));
+    });
+    return db;
+}
+
+/**
+ * Export a database to a JSON file, save all the tables and data
+ * into it. If a JSON file with the given name already exists, it
+ * will be overwrited and the original data will lost.
+ * 
+ * @param {Database} db The database to be exported
+ * @param {String} name Name of the JSON file that will be used when exporting
+ * @param {String} p Path to export the JSON file, default is `~/.jsdb`
+ */
+function exportDatabase(db, name, p=`${path.resolve(homedir, ".jsdb")}`) {
+    const data = db.data;
+    let tables = [];
+    for(var key in data) {
+        tables.push(data[key]);
+    }
+    exportObject({
+        tables: tables,
+        type: db.type,
+    }, p, name);
+}
+
 module.exports = {
-    BasicDatabase: Database
+    BasicDatabase: Database,
+    importDatabase: importDatabase,
+    exportDatabase: exportDatabase
 }

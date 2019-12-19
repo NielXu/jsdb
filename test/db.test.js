@@ -1,5 +1,7 @@
-const { BasicDatabase } = require('../src/db');
+const { BasicDatabase, exportDatabase, importDatabase } = require('../src/db');
 const { expect } = require('chai');
+const path = require('path');
+const fs = require('fs');
 const TABLE = "test";
 
 describe('BasicDatabase', () => {
@@ -415,4 +417,33 @@ describe('BasicDatabase', () => {
         });
     });
 
+});
+
+
+describe('Export/Import database', () => {
+    const db = new BasicDatabase();
+    const init = [{
+        key: "X",
+        value: "Y",
+        status: {code: 200, message: 'Success'}
+    }, {
+        key: "J",
+        value: "Z",
+        status: 500
+    }]
+    db.create("temp", init);
+    it('should export and import the database', () => {
+        exportDatabase(db, "test", __dirname);
+        const js = require('./test');
+        expect(js.hasOwnProperty("tables"));
+        expect(js.hasOwnProperty("type"));
+        const imdb = importDatabase("test", __dirname);
+        expect(imdb.list()).to.deep.equal(["temp"]);
+        imdb.use("temp");
+        expect(imdb.read({})).to.deep.equal(init);
+    });
+
+    after(() => {
+        fs.unlinkSync(`${path.resolve(__dirname, "test.json")}`);
+    });
 });

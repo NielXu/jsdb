@@ -1,6 +1,6 @@
 {
   "name": "@niellxu/jsdb",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Fast and easy to use temporary database based on JSON",
   "homepage": "https://github.com/NielXu/jsdb",
   "bugs": {

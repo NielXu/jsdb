@@ -2,6 +2,8 @@ const { BasicTable } = require('./table');
 const { exportObject, importObject } = require('./json');
 const homedir = require('os').homedir();
 const path = require('path');
+const moment = require('moment');
+const fs = require('fs');
 
 /**
  * The normal database that can perform CRUD
@@ -191,9 +193,13 @@ function exportDatabase(db, name, p=`${path.resolve(homedir, ".jsdb")}`) {
     for(var key in data) {
         tables.push(data[key]);
     }
+    if(p === `${path.resolve(homedir, '.jsdb')}` && !fs.existsSync(p)) {
+        fs.mkdirSync(p);
+    }
     exportObject({
         tables: tables,
         type: db.type,
+        modified: moment().format("YYYY-MM-DD HH:mm:ss")
     }, p, name);
 }
 

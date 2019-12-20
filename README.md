@@ -76,6 +76,6 @@ callbackWrap(database.read({}), (result) => {
 - [ ] SchemaDatabase, a database that based on schema instead of storing objects
 - [ ] ImmutableDatabase, immutable and produce new results in every step
 - [ ] UniqueDatabase, produce unique index for every document (like MongoDB ObjectID)
-- [ ] Export database to JSON files
-- [ ] Import database from JSON files
+- [x] Export database to JSON files
+- [x] Import database from JSON files
 - [x] Tests for `host` calls

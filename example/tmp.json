@@ -1,0 +1,50 @@
+{
+  "tables": [
+    {
+      "name": "customer",
+      "data": [
+        {
+          "id": "9k",
+          "firstname": "Daniel",
+          "lastname": "Xu",
+          "friends": [
+            {
+              "id": "12g"
+            },
+            {
+              "id": "0f"
+            }
+          ]
+        },
+        {
+          "id": "12g",
+          "firstname": "JunXing",
+          "lastname": "XX",
+          "friends": [
+            {
+              "id": "9k"
+            },
+            {
+              "id": "0f"
+            }
+          ]
+        },
+        {
+          "id": "0f",
+          "firstname": "Foo",
+          "lastname": "Bar",
+          "friends": [
+            {
+              "id": "9k"
+            },
+            {
+              "id": "12g"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "type": "basic",
+  "modified": "2020-04-29 17:19:08"
+}
